@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import './App.css'
 import Menu from './components/Menu/Menu';
 
 const ws = new WebSocket('ws://localhost:3030/echo')
@@ -21,13 +20,16 @@ function App() {
         ws.send('Message');
     }, []);
     return (
-        <>
+        <div className="text-black">
             <Menu />
-            {ws.url} (Ready: {ready ? 'true' : 'false'})
-            <br />
-            <div>{messages.map(e => <p>{e}</p>)}</div>
-            <button onClick={stuff}>Send message</button>
-        </>
+            <main className="text-white w-[90%] mx-auto">
+                {ws.url} (Ready: {ready ? 'true' : 'false'})
+                <br />
+                <h3 className="text-xl font-bold">Chat</h3>
+                <div className="p-1 bg-white">{messages.map(e => <p>{e}</p>)}</div>
+                <button onClick={stuff}>Send message</button>
+            </main>
+        </div>
     )
 }
 
