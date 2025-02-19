@@ -56,6 +56,7 @@ async fn user_connected(ws: WebSocket, users: Users) {
     // to the websocket...
     let (tx, rx) = mpsc::unbounded_channel();
     let mut rx = UnboundedReceiverStream::new(rx);
+    let _ = tx.send(Message::text(format!("Connected as {}", my_id)));
 
     tokio::task::spawn(async move {
         while let Some(message) = rx.next().await {
@@ -103,14 +104,12 @@ async fn user_message(my_id: usize, msg: Message, users: &Users) {
     let new_msg = format!("<User#{}>: {}", my_id, msg);
     println!("{}", new_msg);
 
-    // New message from this user, send it to everyone else (except same uid)...
-    for (&uid, tx) in users.read().await.iter() {
-        if my_id != uid {
-            if let Err(_disconnected) = tx.send(Message::text(new_msg.clone())) {
-                // The tx is disconnected, our `user_disconnected` code
-                // should be happening in another task, nothing more to
-                // do here.
-            }
+    // New message from this user, send it to everyone else
+    for (&_, tx) in users.read().await.iter() {
+        if let Err(_disconnected) = tx.send(Message::text(new_msg.clone())) {
+            // The tx is disconnected, our `user_disconnected` code
+            // should be happening in another task, nothing more to
+            // do here.
         }
     }
 }
