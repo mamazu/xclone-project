@@ -27,11 +27,9 @@ async fn main() {
     // Keep track of all connected users, key is usize, value
     // is a websocket sender.
     let users = Users::default();
-    // Turn our "state" into a new Filter...
     let users = warp::any().map(move || users.clone());
 
-    let routes = warp::path("echo")
-        // The `ws()` filter will prepare the Websocket handshake.
+    let server = warp::path::end()
         .and(warp::ws())
         .and(users)
         .map(|ws: warp::ws::Ws, users| {
@@ -40,7 +38,8 @@ async fn main() {
         });
 
     println!("Running websocket");
-    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
+    warp::serve(server)
+        .run(([127, 0, 0, 1], 3030)).await;
 }
 
 async fn user_connected(ws: WebSocket, users: Users) {
