@@ -22,12 +22,14 @@ function App() {
     return (
         <div className="text-black">
             <Menu />
-            <main className="text-white w-[90%] mx-auto">
+            <main className="text-white w-[90%] mx-auto flex flex-col gap-2">
                 {ws.url} (Ready: {ready ? 'true' : 'false'})
                 <br />
                 <h3 className="text-xl font-bold">Chat</h3>
-                <div className="p-1 bg-white">{messages.map(e => <p>{e}</p>)}</div>
-                <button onClick={stuff}>Send message</button>
+                <div className="p-1 bg-white text-black flex gap-1 flex-col">
+                    {messages.map(e => <p>{e}</p>)}
+                </div>
+                <button className="p-1 rounded bg-white text-black" onClick={stuff}>Send message</button>
             </main>
         </div>
     )
