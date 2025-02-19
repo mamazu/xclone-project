@@ -1,35 +1,33 @@
 import { useCallback, useEffect, useState } from 'react';
 import Menu from './components/Menu/Menu';
+import useWebSocket from 'react-use-websocket';
 
-const ws = new WebSocket('ws://localhost:3030/echo')
+const ws = new WebSocket('ws://localhost:3030/')
 function App() {
-    const [messages, setMessages] = useState<Array<string>>([]);
-    const [ready, setReady] = useState(false);
+    const { sendMessage, lastMessage } = useWebSocket('ws://localhost:3030');
+    const [messageHistory, setMessageHistory] = useState<string[]>([]);
 
     useEffect(() => {
-        ws.onmessage = (event) => {
-            console.log(event.data);
-            setMessages([...messages, event.data]);
+        if (lastMessage !== null) {
+            setMessageHistory((prev) => prev.concat(lastMessage.data));
         }
-        ws.addEventListener('open', () => {
-            setReady(true);
-        });
-    }, []);
+    }, [lastMessage]);
 
     const stuff = useCallback(() => {
-        ws.send('Message');
+        sendMessage('Message');
     }, []);
+
     return (
         <div className="text-black">
             <Menu />
+                <button className="p-1 rounded bg-white text-black" onClick={stuff}>Send message</button>
             <main className="text-white w-[90%] mx-auto flex flex-col gap-2">
-                {ws.url} (Ready: {ready ? 'true' : 'false'})
+                {ws.url} (Ready: {ws.readyState})
                 <br />
                 <h3 className="text-xl font-bold">Chat</h3>
                 <div className="p-1 bg-white text-black flex gap-1 flex-col">
-                    {messages.map(e => <p>{e}</p>)}
+                    {messageHistory.map((e, index) => <p key={index}>{e}</p>)}
                 </div>
-                <button className="p-1 rounded bg-white text-black" onClick={stuff}>Send message</button>
             </main>
         </div>
     )
