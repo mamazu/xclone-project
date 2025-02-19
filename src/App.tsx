@@ -1,29 +1,13 @@
 import './App.css'
-import { useState } from "react";
-import * as React from "react";
-import {loadState, saveState} from "./localStorageHandler.ts";
+import Menu from './components/Menu/Menu';
+
 function App() {
-
-    const [inputValue, setInputValue] = useState('');
-
-    const handleChange = (e): void => {
-        setInputValue(e.currentTarget.value);
-        saveState('inputValue', inputValue);
-    }
-
-  return (
-    <>
-        <section>
-            <textarea
-            onChange={handleChange}
-            onBlur={handleChange}
-            name='randomInput'
-            defaultValue={loadState('inputValue') ?? ''}
-            >
-            </textarea>
-        </section>
-    </>
-  )
+    return (
+        <>
+            <Menu />
+            Haallo
+        </>
+    )
 }
 
 export default App
